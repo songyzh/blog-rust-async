@@ -25,5 +25,5 @@ async fn main() {
         server.at("/tags").get(service::get_tags);
     });
 
-    server.listen(("localhost", 3333)).await.unwrap();
+    server.listen(("127.0.0.1", 3333)).await.unwrap();
 }
