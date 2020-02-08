@@ -20,10 +20,8 @@ async fn main() {
 
     server.at("/benchmark").get(service::benchmark);
     server.at("/api").nest(|server| {
-        server.at("/posts").nest(|server| {
-            server.at("").get(service::get_posts);
-            server.at("/:slug").get(service::get_post_by_slug);
-        });
+        server.at("/posts").get(service::get_posts);
+        server.at("/posts/:slug").get(service::get_post_by_slug);
         server.at("/tags").get(service::get_tags);
     });
 
