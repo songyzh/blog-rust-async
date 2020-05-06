@@ -8,12 +8,12 @@ pub async fn get_posts(
     tag: &Option<String>,
 ) -> Vec<MySqlRow> {
     match tag {
-        None => sqlx::query("select * from post order by id desc limit ?, ?")
+        None => sqlx::query("select * from post where status = 1 order by id desc limit ?, ?")
             .bind(offset).bind(limit)
             .fetch_all(&mut pool)
             .await
             .unwrap(),
-        Some(tag) => sqlx::query("select p.* from post p join post_tag pt on p.id = pt.post_id join tag t on pt.tag_id = t.id where t.text = ? order by id desc limit ?, ?")
+        Some(tag) => sqlx::query("select p.* from post p join post_tag pt on p.id = pt.post_id join tag t on pt.tag_id = t.id where p.status = 1 and t.text = ? order by id desc limit ?, ?")
             .bind(tag).bind(offset).bind(limit)
             .fetch_all(&mut pool)
             .await
@@ -23,11 +23,11 @@ pub async fn get_posts(
 
 pub async fn count_posts(mut pool: &MySqlPool, tag: &Option<String>) -> MySqlRow {
     match tag {
-        None => sqlx::query("select count(1) as cnt from post")
+        None => sqlx::query("select count(1) as cnt from post where status = 1")
             .fetch_one(&mut pool)
             .await
             .unwrap(),
-        Some(tag) => sqlx::query("select count(1) as cnt from post p join post_tag pt on p.id = pt.post_id join tag t on pt.tag_id = t.id where t.text = ?")
+        Some(tag) => sqlx::query("select count(1) as cnt from post p join post_tag pt on p.id = pt.post_id join tag t on pt.tag_id = t.id where p.status = 1 and t.text = ?")
             .bind(tag)
             .fetch_one(&mut pool)
             .await
